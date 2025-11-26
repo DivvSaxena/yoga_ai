@@ -26,6 +26,10 @@ export const siteConfig = {
       href: "/ai-planner",
     },
     {
+      label: "Feedback",
+      href: "/feedback",
+    },
+    {
       label: "About",
       href: "/about",
     },
@@ -50,6 +54,10 @@ export const siteConfig = {
     {
       label: "AI Planner",
       href: "/ai-planner",
+    },
+    {
+      label: "Feedback",
+      href: "/feedback",
     },
     {
       label: "About",
