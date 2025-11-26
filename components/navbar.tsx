@@ -52,12 +52,12 @@ export const Navbar = () => {
         justify="end"
       >
         <NavbarItem className="hidden sm:flex gap-2">
-          <Link isExternal href={siteConfig.links.twitter} title="Twitter">
+          <NextLink href="/connect" title="Twitter">
             <TwitterIcon className="text-default-500" />
-          </Link>
-          <Link isExternal href={siteConfig.links.instagram} title="Instagram">
+          </NextLink>
+          <NextLink href="/connect" title="Instagram">
             <InstagramIcon className="text-default-500" />
-          </Link>
+          </NextLink>
           <ThemeSwitch />
         </NavbarItem>
         <NavbarItem className="hidden md:flex">

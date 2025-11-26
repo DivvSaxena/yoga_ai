@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@heroui/button";
 import { button as buttonStyles } from "@heroui/theme";
 import NextLink from "next/link";
+import Image from "next/image";
 
 import { title, subtitle } from "@/components/primitives";
 import { YogaIcon, FitnessIcon, HeartPulseIcon } from "@/components/icons";
@@ -18,6 +19,7 @@ const workoutPlans = {
     gradientClass: "bg-gradient-to-r from-violet-500/10 to-violet-500/5",
     textClass: "text-violet-500",
     badgeClass: "bg-violet-500/10 text-violet-500",
+    image: "/assets/yoga-pranayamasection.png",
     description:
       "Traditional yoga asanas and breathing exercises for flexibility, strength, and mental peace.",
     routines: [
@@ -80,6 +82,7 @@ const workoutPlans = {
     gradientClass: "bg-gradient-to-r from-success/10 to-success/5",
     textClass: "text-success",
     badgeClass: "bg-success/10 text-success",
+    image: "/assets/strength-training-section.png",
     description:
       "Progressive resistance training for muscle building and strength gains.",
     routines: [
@@ -143,6 +146,7 @@ const workoutPlans = {
     gradientClass: "bg-gradient-to-r from-danger/10 to-danger/5",
     textClass: "text-danger",
     badgeClass: "bg-danger/10 text-danger",
+    image: "/assets/cardio-hiit-section.png",
     description:
       "High-intensity workouts for maximum calorie burn and cardiovascular health.",
     routines: [
@@ -203,6 +207,7 @@ const workoutPlans = {
     gradientClass: "bg-gradient-to-r from-primary/10 to-primary/5",
     textClass: "text-primary",
     badgeClass: "bg-primary/10 text-primary",
+    image: "/assets/basic-equipment-setup.png",
     description: "Effective workouts you can do anywhere with zero equipment.",
     routines: [
       {
@@ -270,13 +275,25 @@ export default function FitnessPlansPage() {
   return (
     <DefaultLayout>
       {/* Hero Section */}
-      <section className="py-12 text-center">
-        <h1 className={title({ size: "lg" })}>Fitness </h1>
-        <h1 className={title({ size: "lg", color: "green" })}>Plans</h1>
-        <p className={subtitle({ class: "mt-4 max-w-2xl mx-auto" })}>
-          From traditional yoga to modern HIIT - workout routines that fit your
-          space, schedule, and fitness level.
-        </p>
+      <section className="py-12">
+        <div className="grid md:grid-cols-2 gap-8 items-center">
+          <div className="text-center md:text-left">
+            <h1 className={title({ size: "lg" })}>Fitness </h1>
+            <h1 className={title({ size: "lg", color: "green" })}>Plans</h1>
+            <p className={subtitle({ class: "mt-4" })}>
+              From traditional yoga to modern HIIT - workout routines that fit
+              your space, schedule, and fitness level.
+            </p>
+          </div>
+          <div className="relative h-64 md:h-80 rounded-3xl overflow-hidden">
+            <Image
+              alt="Fitness and Yoga"
+              className="object-cover"
+              fill
+              src="/assets/hero-banner.png"
+            />
+          </div>
+        </div>
       </section>
 
       {/* Category Selector */}
@@ -307,23 +324,30 @@ export default function FitnessPlansPage() {
 
       {/* Selected Category Details */}
       <section className="py-8">
-        <div
-          className={`${currentPlan.gradientClass} rounded-3xl p-8`}
-        >
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 rounded-full bg-white dark:bg-default-100 flex items-center justify-center mx-auto mb-4">
-              <currentPlan.icon
-                className={currentPlan.textClass}
-                size={32}
+        <div className={`${currentPlan.gradientClass} rounded-3xl p-8`}>
+          <div className="grid md:grid-cols-2 gap-8 items-center mb-8">
+            <div className="relative h-64 md:h-80 rounded-2xl overflow-hidden">
+              <Image
+                alt={currentPlan.title}
+                className="object-cover"
+                fill
+                src={currentPlan.image}
               />
             </div>
-            <h2 className={title({ size: "sm" })}>{currentPlan.title}</h2>
-            <p className={`${currentPlan.textClass} font-semibold mt-2`}>
-              {currentPlan.subtitle}
-            </p>
-            <p className="text-default-600 mt-2 max-w-xl mx-auto">
-              {currentPlan.description}
-            </p>
+            <div className="text-center md:text-left">
+              <div className="flex items-center justify-center md:justify-start gap-3 mb-4">
+                <div className="w-12 h-12 rounded-full bg-white dark:bg-default-100 flex items-center justify-center">
+                  <currentPlan.icon className={currentPlan.textClass} size={24} />
+                </div>
+                <h2 className={title({ size: "sm" })}>{currentPlan.title}</h2>
+              </div>
+              <p className={`${currentPlan.textClass} font-semibold`}>
+                {currentPlan.subtitle}
+              </p>
+              <p className="text-default-600 mt-2">
+                {currentPlan.description}
+              </p>
+            </div>
           </div>
 
           {/* Routines */}
@@ -414,35 +438,50 @@ export default function FitnessPlansPage() {
 
       {/* Equipment Guide */}
       <section className="py-16 bg-gradient-to-r from-primary/5 to-success/5 rounded-3xl px-8">
-        <div className="text-center mb-12">
-          <h2 className={title({ size: "sm" })}>Equipment </h2>
-          <h2 className={title({ size: "sm", color: "yellow" })}>Guide</h2>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="text-center">
-            <div className="text-4xl mb-4">🏠</div>
-            <h3 className="font-semibold mb-2">No Equipment</h3>
-            <p className="text-sm text-default-500">
-              Bodyweight exercises, yoga, and cardio - perfect for home workouts
-              with zero investment.
-            </p>
+        <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div>
+            <h2 className={title({ size: "sm" })}>Equipment </h2>
+            <h2 className={title({ size: "sm", color: "yellow" })}>Guide</h2>
+            <div className="mt-8 space-y-6">
+              <div className="flex items-start gap-4">
+                <div className="text-3xl">🏠</div>
+                <div>
+                  <h3 className="font-semibold mb-1">No Equipment</h3>
+                  <p className="text-sm text-default-500">
+                    Bodyweight exercises, yoga, and cardio - perfect for home
+                    workouts with zero investment.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="text-3xl">🎒</div>
+                <div>
+                  <h3 className="font-semibold mb-1">Basic Setup</h3>
+                  <p className="text-sm text-default-500">
+                    Yoga mat, resistance bands, and a pair of dumbbells - invest
+                    under Rs. 2000.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="text-3xl">💪</div>
+                <div>
+                  <h3 className="font-semibold mb-1">Full Gym</h3>
+                  <p className="text-sm text-default-500">
+                    Access to gym equipment? We have advanced routines for
+                    maximum gains.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="text-center">
-            <div className="text-4xl mb-4">🎒</div>
-            <h3 className="font-semibold mb-2">Basic Setup</h3>
-            <p className="text-sm text-default-500">
-              Yoga mat, resistance bands, and a pair of dumbbells - invest under
-              Rs. 2000.
-            </p>
-          </div>
-          <div className="text-center">
-            <div className="text-4xl mb-4">💪</div>
-            <h3 className="font-semibold mb-2">Full Gym</h3>
-            <p className="text-sm text-default-500">
-              Access to gym equipment? We have advanced routines for maximum
-              gains.
-            </p>
+          <div className="relative h-72 md:h-96 rounded-2xl overflow-hidden">
+            <Image
+              alt="Pranayama and meditation"
+              className="object-cover"
+              fill
+              src="/assets/pranayama.png"
+            />
           </div>
         </div>
       </section>

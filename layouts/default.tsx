@@ -5,7 +5,6 @@ import { Head } from "./head";
 
 import { Navbar } from "@/components/navbar";
 import { TwitterIcon, InstagramIcon } from "@/components/icons";
-import { siteConfig } from "@/config/site";
 
 export default function DefaultLayout({
   children,
@@ -33,12 +32,12 @@ export default function DefaultLayout({
                 AI-powered fitness companion for Indian lifestyles.
               </p>
               <div className="flex gap-4">
-                <Link isExternal href={siteConfig.links.twitter}>
+                <NextLink href="/connect">
                   <TwitterIcon className="text-default-500 hover:text-success transition-colors" />
-                </Link>
-                <Link isExternal href={siteConfig.links.instagram}>
+                </NextLink>
+                <NextLink href="/connect">
                   <InstagramIcon className="text-default-500 hover:text-success transition-colors" />
-                </Link>
+                </NextLink>
               </div>
             </div>
 
