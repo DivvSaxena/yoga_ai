@@ -275,9 +275,9 @@ export default function FitnessPlansPage() {
   return (
     <DefaultLayout>
       {/* Hero Section */}
-      <section className="py-12">
-        <div className="grid md:grid-cols-2 gap-8 items-center">
-          <div className="text-center md:text-left">
+      <section className="py-8 sm:py-12 px-2 sm:px-0">
+        <div className="grid md:grid-cols-2 gap-6 sm:gap-8 items-center">
+          <div className="text-center md:text-left order-2 md:order-1">
             <h1 className={title({ size: "lg" })}>Fitness </h1>
             <h1 className={title({ size: "lg", color: "green" })}>Plans</h1>
             <p className={subtitle({ class: "mt-4" })}>
@@ -285,7 +285,7 @@ export default function FitnessPlansPage() {
               your space, schedule, and fitness level.
             </p>
           </div>
-          <div className="relative h-64 md:h-80 rounded-3xl overflow-hidden">
+          <div className="relative h-48 sm:h-64 md:h-80 rounded-2xl sm:rounded-3xl overflow-hidden order-1 md:order-2">
             <Image
               alt="Fitness and Yoga"
               className="object-cover"
@@ -297,8 +297,8 @@ export default function FitnessPlansPage() {
       </section>
 
       {/* Category Selector */}
-      <section className="py-8">
-        <div className="flex flex-wrap justify-center gap-4">
+      <section className="py-4 sm:py-8 px-2 sm:px-0">
+        <div className="flex flex-wrap justify-center gap-2 sm:gap-4">
           {(Object.keys(workoutPlans) as WorkoutCategory[]).map((category) => {
             const plan = workoutPlans[category];
 
@@ -311,11 +311,15 @@ export default function FitnessPlansPage() {
                     : ""
                 }
                 radius="full"
+                size="sm"
                 variant={selectedCategory === category ? "solid" : "bordered"}
                 onPress={() => setSelectedCategory(category)}
               >
-                <plan.icon size={18} />
-                {plan.title}
+                <plan.icon size={16} />
+                <span className="hidden sm:inline">{plan.title}</span>
+                <span className="sm:hidden">
+                  {plan.title.split(" ")[0]}
+                </span>
               </Button>
             );
           })}
@@ -323,10 +327,12 @@ export default function FitnessPlansPage() {
       </section>
 
       {/* Selected Category Details */}
-      <section className="py-8">
-        <div className={`${currentPlan.gradientClass} rounded-3xl p-8`}>
-          <div className="grid md:grid-cols-2 gap-8 items-center mb-8">
-            <div className="relative h-64 md:h-80 rounded-2xl overflow-hidden">
+      <section className="py-4 sm:py-8 px-2 sm:px-0">
+        <div
+          className={`${currentPlan.gradientClass} rounded-2xl sm:rounded-3xl p-4 sm:p-8`}
+        >
+          <div className="grid md:grid-cols-2 gap-4 sm:gap-8 items-center mb-6 sm:mb-8">
+            <div className="relative h-48 sm:h-64 md:h-80 rounded-xl sm:rounded-2xl overflow-hidden">
               <Image
                 alt={currentPlan.title}
                 className="object-cover"
@@ -335,23 +341,26 @@ export default function FitnessPlansPage() {
               />
             </div>
             <div className="text-center md:text-left">
-              <div className="flex items-center justify-center md:justify-start gap-3 mb-4">
-                <div className="w-12 h-12 rounded-full bg-white dark:bg-default-100 flex items-center justify-center">
-                  <currentPlan.icon className={currentPlan.textClass} size={24} />
+              <div className="flex items-center justify-center md:justify-start gap-2 sm:gap-3 mb-3 sm:mb-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white dark:bg-default-100 flex items-center justify-center">
+                  <currentPlan.icon
+                    className={currentPlan.textClass}
+                    size={20}
+                  />
                 </div>
                 <h2 className={title({ size: "sm" })}>{currentPlan.title}</h2>
               </div>
-              <p className={`${currentPlan.textClass} font-semibold`}>
+              <p className={`${currentPlan.textClass} font-semibold text-sm sm:text-base`}>
                 {currentPlan.subtitle}
               </p>
-              <p className="text-default-600 mt-2">
+              <p className="text-default-600 mt-2 text-sm sm:text-base">
                 {currentPlan.description}
               </p>
             </div>
           </div>
 
           {/* Routines */}
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
             {currentPlan.routines.map((routine, index) => (
               <div
                 key={index}

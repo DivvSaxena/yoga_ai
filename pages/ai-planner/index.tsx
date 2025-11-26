@@ -385,9 +385,9 @@ export default function AIPlannerPage() {
 
       {/* Progress Steps */}
       {step < 3 && (
-        <div className="flex justify-center gap-4 mb-8">
+        <div className="flex justify-center gap-2 sm:gap-4 mb-8 px-4">
           {[1, 2].map((s) => (
-            <div key={s} className="flex items-center gap-2">
+            <div key={s} className="flex items-center gap-1 sm:gap-2">
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
                   step >= s ? "bg-success text-white" : "bg-default-200"
@@ -395,10 +395,14 @@ export default function AIPlannerPage() {
               >
                 {step > s ? <CheckIcon size={16} /> : s}
               </div>
-              <span className={step >= s ? "text-success" : "text-default-500"}>
-                {s === 1 ? "Basic Info" : "Goals & Preferences"}
+              <span
+                className={`text-xs sm:text-base ${step >= s ? "text-success" : "text-default-500"}`}
+              >
+                {s === 1 ? "Basic Info" : "Goals"}
               </span>
-              {s < 2 && <div className="w-8 h-0.5 bg-default-200" />}
+              {s < 2 && (
+                <div className="w-4 sm:w-8 h-0.5 bg-default-200 hidden sm:block" />
+              )}
             </div>
           ))}
         </div>
@@ -406,8 +410,8 @@ export default function AIPlannerPage() {
 
       {/* Step 1: Basic Information */}
       {step === 1 && (
-        <section className="max-w-2xl mx-auto py-8">
-          <div className="bg-default-50 rounded-2xl p-8">
+        <section className="max-w-2xl mx-auto py-4 sm:py-8 px-4 sm:px-0">
+          <div className="bg-default-50 rounded-2xl p-4 sm:p-8">
             <h2 className="text-xl font-semibold mb-6">
               Tell us about yourself
             </h2>
@@ -420,7 +424,7 @@ export default function AIPlannerPage() {
                 onValueChange={(v) => updateForm("name", v)}
               />
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Input
                   label="Age"
                   placeholder="25"
@@ -430,7 +434,7 @@ export default function AIPlannerPage() {
                 />
                 <div>
                   <span className="block text-sm mb-2">Gender</span>
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     {["male", "female", "other"].map((g) => (
                       <Button
                         key={g}
@@ -449,7 +453,7 @@ export default function AIPlannerPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Input
                   label="Weight (kg)"
                   placeholder="70"
@@ -484,8 +488,8 @@ export default function AIPlannerPage() {
 
       {/* Step 2: Goals & Preferences */}
       {step === 2 && (
-        <section className="max-w-2xl mx-auto py-8">
-          <div className="bg-default-50 rounded-2xl p-8">
+        <section className="max-w-2xl mx-auto py-4 sm:py-8 px-4 sm:px-0">
+          <div className="bg-default-50 rounded-2xl p-4 sm:p-8">
             <h2 className="text-xl font-semibold mb-6">
               Your goals & preferences
             </h2>
@@ -495,7 +499,7 @@ export default function AIPlannerPage() {
                 <span className="block text-sm mb-3">
                   What&apos;s your primary goal?
                 </span>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-3 gap-2 sm:gap-3">
                   {[
                     { id: "weight-loss", label: "Lose Weight", emoji: "⚖️" },
                     { id: "muscle-gain", label: "Build Muscle", emoji: "💪" },
@@ -503,15 +507,19 @@ export default function AIPlannerPage() {
                   ].map((goal) => (
                     <button
                       key={goal.id}
-                      className={`p-4 rounded-xl border-2 text-center transition-all ${
+                      className={`p-2 sm:p-4 rounded-xl border-2 text-center transition-all ${
                         formData.goal === goal.id
                           ? "border-success bg-success/10"
                           : "border-default-200 hover:border-default-400"
                       }`}
                       onClick={() => updateForm("goal", goal.id)}
                     >
-                      <div className="text-2xl mb-2">{goal.emoji}</div>
-                      <div className="text-sm font-medium">{goal.label}</div>
+                      <div className="text-xl sm:text-2xl mb-1 sm:mb-2">
+                        {goal.emoji}
+                      </div>
+                      <div className="text-xs sm:text-sm font-medium">
+                        {goal.label}
+                      </div>
                     </button>
                   ))}
                 </div>
@@ -519,31 +527,33 @@ export default function AIPlannerPage() {
 
               <div>
                 <span className="block text-sm mb-3">Activity Level</span>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-3 gap-2 sm:gap-3">
                   {[
                     {
                       id: "sedentary",
                       label: "Sedentary",
-                      desc: "Desk job, little exercise",
+                      desc: "Desk job",
                     },
                     {
                       id: "moderate",
                       label: "Moderate",
-                      desc: "Some exercise weekly",
+                      desc: "Some exercise",
                     },
                     { id: "active", label: "Active", desc: "Regular exercise" },
                   ].map((level) => (
                     <button
                       key={level.id}
-                      className={`p-4 rounded-xl border-2 text-center transition-all ${
+                      className={`p-2 sm:p-4 rounded-xl border-2 text-center transition-all ${
                         formData.activityLevel === level.id
                           ? "border-success bg-success/10"
                           : "border-default-200 hover:border-default-400"
                       }`}
                       onClick={() => updateForm("activityLevel", level.id)}
                     >
-                      <div className="text-sm font-medium">{level.label}</div>
-                      <div className="text-xs text-default-500 mt-1">
+                      <div className="text-xs sm:text-sm font-medium">
+                        {level.label}
+                      </div>
+                      <div className="text-xs text-default-500 mt-1 hidden sm:block">
                         {level.desc}
                       </div>
                     </button>
@@ -553,23 +563,25 @@ export default function AIPlannerPage() {
 
               <div>
                 <span className="block text-sm mb-3">Diet Preference</span>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-3 gap-2 sm:gap-3">
                   {[
-                    { id: "vegetarian", label: "Vegetarian", emoji: "🥗" },
+                    { id: "vegetarian", label: "Veg", emoji: "🥗" },
                     { id: "non-vegetarian", label: "Non-Veg", emoji: "🍗" },
-                    { id: "eggetarian", label: "Eggetarian", emoji: "🥚" },
+                    { id: "eggetarian", label: "Egg", emoji: "🥚" },
                   ].map((diet) => (
                     <button
                       key={diet.id}
-                      className={`p-4 rounded-xl border-2 text-center transition-all ${
+                      className={`p-2 sm:p-4 rounded-xl border-2 text-center transition-all ${
                         formData.dietPreference === diet.id
                           ? "border-success bg-success/10"
                           : "border-default-200 hover:border-default-400"
                       }`}
                       onClick={() => updateForm("dietPreference", diet.id)}
                     >
-                      <div className="text-2xl mb-1">{diet.emoji}</div>
-                      <div className="text-sm font-medium">{diet.label}</div>
+                      <div className="text-xl sm:text-2xl mb-1">{diet.emoji}</div>
+                      <div className="text-xs sm:text-sm font-medium">
+                        {diet.label}
+                      </div>
                     </button>
                   ))}
                 </div>
@@ -632,47 +644,51 @@ export default function AIPlannerPage() {
 
       {/* Step 3: Generated Plan */}
       {step === 3 && generatedPlan && (
-        <section className="py-8">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-success/10 rounded-full text-success mb-4">
+        <section className="py-4 sm:py-8 px-2 sm:px-0">
+          <div className="text-center mb-6 sm:mb-8">
+            <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-success/10 rounded-full text-success mb-4">
               <CheckIcon size={20} />
-              <span className="font-medium">Plan Generated Successfully!</span>
+              <span className="font-medium text-sm sm:text-base">
+                Plan Generated!
+              </span>
             </div>
             <h2 className={title({ size: "sm" })}>
-              {formData.name}&apos;s Personalized Plan
+              {formData.name}&apos;s Plan
             </h2>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-8">
+          <div className="grid lg:grid-cols-2 gap-4 sm:gap-8">
             {/* Diet Plan */}
-            <div className="bg-gradient-to-br from-warning/10 to-warning/5 rounded-3xl p-6">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-xl bg-warning/20 flex items-center justify-center">
-                  <DietIcon className="text-warning" size={24} />
+            <div className="bg-gradient-to-br from-warning/10 to-warning/5 rounded-2xl sm:rounded-3xl p-4 sm:p-6">
+              <div className="flex items-center gap-3 mb-4 sm:mb-6">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-warning/20 flex items-center justify-center">
+                  <DietIcon className="text-warning" size={20} />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold">Your Diet Plan</h3>
-                  <p className="text-sm text-default-500">
-                    {generatedPlan.diet.calories} calories/day
+                  <h3 className="text-lg sm:text-xl font-semibold">
+                    Diet Plan
+                  </h3>
+                  <p className="text-xs sm:text-sm text-default-500">
+                    {generatedPlan.diet.calories} cal/day
                   </p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-4 mb-6">
-                <div className="bg-white dark:bg-default-100 rounded-xl p-3 text-center">
-                  <p className="text-lg font-bold text-warning">
+              <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-6">
+                <div className="bg-white dark:bg-default-100 rounded-xl p-2 sm:p-3 text-center">
+                  <p className="text-sm sm:text-lg font-bold text-warning">
                     {generatedPlan.diet.protein}
                   </p>
                   <p className="text-xs text-default-500">Protein</p>
                 </div>
-                <div className="bg-white dark:bg-default-100 rounded-xl p-3 text-center">
-                  <p className="text-lg font-bold text-warning">
+                <div className="bg-white dark:bg-default-100 rounded-xl p-2 sm:p-3 text-center">
+                  <p className="text-sm sm:text-lg font-bold text-warning">
                     {generatedPlan.diet.carbs}
                   </p>
                   <p className="text-xs text-default-500">Carbs</p>
                 </div>
-                <div className="bg-white dark:bg-default-100 rounded-xl p-3 text-center">
-                  <p className="text-lg font-bold text-warning">
+                <div className="bg-white dark:bg-default-100 rounded-xl p-2 sm:p-3 text-center">
+                  <p className="text-sm sm:text-lg font-bold text-warning">
                     {generatedPlan.diet.fats}
                   </p>
                   <p className="text-xs text-default-500">Fats</p>
@@ -705,40 +721,43 @@ export default function AIPlannerPage() {
             </div>
 
             {/* Workout Plan */}
-            <div className="bg-gradient-to-br from-success/10 to-success/5 rounded-3xl p-6">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-xl bg-success/20 flex items-center justify-center">
-                  <FitnessIcon className="text-success" size={24} />
+            <div className="bg-gradient-to-br from-success/10 to-success/5 rounded-2xl sm:rounded-3xl p-4 sm:p-6">
+              <div className="flex items-center gap-3 mb-4 sm:mb-6">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-success/20 flex items-center justify-center">
+                  <FitnessIcon className="text-success" size={20} />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold">Your Workout Plan</h3>
-                  <p className="text-sm text-default-500">
-                    {generatedPlan.workout.daysPerWeek} days/week •{" "}
-                    {generatedPlan.workout.duration}
+                  <h3 className="text-lg sm:text-xl font-semibold">
+                    Workout Plan
+                  </h3>
+                  <p className="text-xs sm:text-sm text-default-500">
+                    {generatedPlan.workout.daysPerWeek} days/week
                   </p>
                 </div>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {generatedPlan.workout.schedule.map((day, index) => (
                   <div
                     key={index}
-                    className="bg-white dark:bg-default-100 rounded-xl p-4"
+                    className="bg-white dark:bg-default-100 rounded-xl p-3 sm:p-4"
                   >
                     <div className="flex justify-between items-center mb-2">
-                      <span className="font-medium text-success">
+                      <span className="font-medium text-success text-sm sm:text-base">
                         {day.day}
                       </span>
-                      <span className="text-sm">{day.workout}</span>
+                      <span className="text-xs sm:text-sm">{day.workout}</span>
                     </div>
                     <div className="space-y-1">
                       {day.exercises.map((ex, idx) => (
                         <div
                           key={idx}
-                          className="flex justify-between text-sm text-default-600"
+                          className="flex justify-between text-xs sm:text-sm text-default-600"
                         >
-                          <span>{ex.name}</span>
-                          <span className="text-default-400">{ex.sets}</span>
+                          <span className="truncate mr-2">{ex.name}</span>
+                          <span className="text-default-400 whitespace-nowrap">
+                            {ex.sets}
+                          </span>
                         </div>
                       ))}
                     </div>
@@ -749,22 +768,27 @@ export default function AIPlannerPage() {
           </div>
 
           {/* Tips */}
-          <div className="mt-8 bg-gradient-to-r from-primary/10 to-violet/10 rounded-3xl p-6">
-            <h3 className="text-lg font-semibold mb-4">
-              Personalized Tips for You
+          <div className="mt-4 sm:mt-8 bg-gradient-to-r from-primary/10 to-violet/10 rounded-2xl sm:rounded-3xl p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">
+              Tips for You
             </h3>
-            <div className="grid md:grid-cols-2 gap-3">
+            <div className="grid sm:grid-cols-2 gap-2 sm:gap-3">
               {generatedPlan.tips.map((tip, index) => (
-                <div key={index} className="flex items-start gap-3">
-                  <CheckIcon className="text-success mt-0.5" size={18} />
-                  <span className="text-sm text-default-700">{tip}</span>
+                <div key={index} className="flex items-start gap-2 sm:gap-3">
+                  <CheckIcon
+                    className="text-success mt-0.5 flex-shrink-0"
+                    size={16}
+                  />
+                  <span className="text-xs sm:text-sm text-default-700">
+                    {tip}
+                  </span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Actions */}
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
+          <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
             <Button
               color="success"
               radius="full"

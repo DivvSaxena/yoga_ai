@@ -15,12 +15,12 @@ export default function DefaultLayout({
     <div className="relative flex flex-col min-h-screen">
       <Head />
       <Navbar />
-      <main className="container mx-auto max-w-7xl px-6 flex-grow pt-8 pb-16">
+      <main className="container mx-auto max-w-7xl px-4 sm:px-6 flex-grow pt-6 sm:pt-8 pb-12 sm:pb-16">
         {children}
       </main>
       <footer className="w-full bg-default-50 border-t border-default-200">
-        <div className="container mx-auto max-w-7xl px-6 py-12">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="container mx-auto max-w-7xl px-4 sm:px-6 py-8 sm:py-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
             {/* Brand */}
             <div className="col-span-2 md:col-span-1">
               <NextLink className="flex items-center gap-2 mb-4" href="/">
@@ -121,19 +121,19 @@ export default function DefaultLayout({
 
             {/* Contact */}
             <div>
-              <h4 className="font-semibold mb-4">Contact</h4>
+              <h4 className="font-semibold mb-3 sm:mb-4">Contact</h4>
               <ul className="space-y-2 text-sm text-default-500">
-                <li>hello@divvsaxena.com</li>
+                <li className="break-all">hello@divvsaxena.com</li>
                 <li>Delhi, India</li>
               </ul>
             </div>
           </div>
 
-          <div className="border-t border-default-200 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-default-500">
+          <div className="border-t border-default-200 mt-6 sm:mt-8 pt-6 sm:pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-xs sm:text-sm text-default-500 text-center md:text-left">
               © 2024 YogaAI. All rights reserved.
             </p>
-            <div className="flex gap-6 text-sm text-default-500">
+            <div className="flex gap-4 sm:gap-6 text-xs sm:text-sm text-default-500">
               <Link className="hover:text-success transition-colors" href="#">
                 Privacy Policy
               </Link>

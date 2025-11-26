@@ -8,15 +8,15 @@ import DefaultLayout from "@/layouts/default";
 export default function ConnectPage() {
   return (
     <DefaultLayout>
-      <section className="flex flex-col items-center justify-center min-h-[60vh] text-center py-16">
-        <div className="max-w-2xl mx-auto">
+      <section className="flex flex-col items-center justify-center min-h-[60vh] text-center py-8 sm:py-16 px-4">
+        <div className="max-w-2xl mx-auto w-full">
           {/* Social Icons */}
-          <div className="flex justify-center gap-8 mb-8">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-lg">
-              <TwitterIcon className="text-white" size={40} />
+          <div className="flex justify-center gap-4 sm:gap-8 mb-6 sm:mb-8">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-lg">
+              <TwitterIcon className="text-white" size={32} />
             </div>
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500 flex items-center justify-center shadow-lg">
-              <InstagramIcon className="text-white" size={40} />
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500 flex items-center justify-center shadow-lg">
+              <InstagramIcon className="text-white" size={32} />
             </div>
           </div>
 
@@ -31,12 +31,12 @@ export default function ConnectPage() {
           </p>
 
           {/* Message */}
-          <div className="bg-gradient-to-r from-success/10 to-primary/10 rounded-2xl p-8 mt-8">
-            <p className="text-default-600 leading-relaxed text-lg">
+          <div className="bg-gradient-to-r from-success/10 to-primary/10 rounded-2xl p-4 sm:p-8 mt-6 sm:mt-8">
+            <p className="text-default-600 leading-relaxed text-base sm:text-lg">
               We&apos;re a small team focused on building an amazing product
               first.
             </p>
-            <p className="text-default-600 leading-relaxed mt-4 text-lg">
+            <p className="text-default-600 leading-relaxed mt-3 sm:mt-4 text-base sm:text-lg">
               But if you&apos;d like to{" "}
               <span className="text-success font-semibold">
                 back us or explore synergies

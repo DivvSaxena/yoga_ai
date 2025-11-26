@@ -93,7 +93,7 @@ export default function IndexPage() {
           </div>
         </div>
 
-        <div className="flex gap-4 mt-4">
+        <div className="flex flex-col sm:flex-row gap-4 mt-4">
           <NextLink
             className={buttonStyles({
               color: "success",
@@ -159,8 +159,8 @@ export default function IndexPage() {
       </section>
 
       {/* Indian Diet Section */}
-      <section className="py-16 bg-gradient-to-r from-success/5 to-warning/5 rounded-3xl px-8">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
+      <section className="py-12 md:py-16 bg-gradient-to-r from-success/5 to-warning/5 rounded-3xl px-4 sm:px-8">
+        <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
           <div>
             <h2 className={title({ size: "sm" })}>Diet Plans That </h2>
             <h2 className={title({ size: "sm", color: "yellow" })}>
@@ -305,7 +305,7 @@ export default function IndexPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 text-center bg-gradient-to-r from-success/10 via-primary/10 to-warning/10 rounded-3xl px-8">
+      <section className="py-12 md:py-16 text-center bg-gradient-to-r from-success/10 via-primary/10 to-warning/10 rounded-3xl px-4 sm:px-8">
         <h2 className={title({ size: "sm" })}>Ready to Start Your </h2>
         <h2 className={title({ size: "sm", color: "green" })}>
           Fitness Journey?
