@@ -44,193 +44,22 @@ type GeneratedPlan = {
   tips: string[];
 };
 
-const mockGeneratePlan = (data: FormData): GeneratedPlan => {
-  const weight = parseInt(data.weight) || 70;
-  const isWeightLoss = data.goal === "weight-loss";
-  const isMuscleGain = data.goal === "muscle-gain";
-  const isVegetarian = data.dietPreference === "vegetarian";
-
-  const baseCalories = isWeightLoss ? 1600 : isMuscleGain ? 2500 : 2000;
-  const adjustedCalories = Math.round(baseCalories * (weight / 70));
-
-  return {
-    diet: {
-      calories: adjustedCalories,
-      protein: isMuscleGain ? "120-150g" : "60-80g",
-      carbs: isWeightLoss ? "150-180g" : "200-250g",
-      fats: "50-70g",
-      meals: [
-        {
-          time: "7:00 AM",
-          name: "Breakfast",
-          items: isVegetarian
-            ? [
-                "Moong dal chilla (2 pcs)",
-                "Mint chutney",
-                "1 cup green tea",
-                "5 soaked almonds",
-              ]
-            : [
-                "3 Egg white omelette",
-                "2 whole wheat toast",
-                "1 cup milk",
-                "1 banana",
-              ],
-          calories: Math.round(adjustedCalories * 0.25),
-        },
-        {
-          time: "10:30 AM",
-          name: "Mid-Morning Snack",
-          items: ["1 medium apple", "10 roasted almonds", "Green tea"],
-          calories: Math.round(adjustedCalories * 0.1),
-        },
-        {
-          time: "1:00 PM",
-          name: "Lunch",
-          items: isVegetarian
-            ? [
-                "2 Multigrain roti",
-                "1 cup rajma/chole",
-                "Mixed vegetable sabzi",
-                "Cucumber raita",
-                "Green salad",
-              ]
-            : [
-                "1 cup brown rice",
-                "Grilled chicken (150g)",
-                "Dal tadka",
-                "Salad",
-                "Buttermilk",
-              ],
-          calories: Math.round(adjustedCalories * 0.3),
-        },
-        {
-          time: "4:30 PM",
-          name: "Evening Snack",
-          items: isVegetarian
-            ? ["Sprouts chaat", "Coconut water"]
-            : ["Boiled egg (2)", "Green tea"],
-          calories: Math.round(adjustedCalories * 0.1),
-        },
-        {
-          time: "7:30 PM",
-          name: "Dinner",
-          items: isVegetarian
-            ? ["1 Roti", "Palak paneer", "Mixed veg salad", "1 cup dal"]
-            : ["2 Roti", "Fish curry", "Sauteed vegetables", "Curd"],
-          calories: Math.round(adjustedCalories * 0.25),
-        },
-      ],
+const generatePlanFromAPI = async (data: FormData): Promise<GeneratedPlan> => {
+  const response = await fetch("/api/generate-plan", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
     },
-    workout: {
-      daysPerWeek:
-        data.activityLevel === "sedentary"
-          ? 3
-          : data.activityLevel === "moderate"
-            ? 5
-            : 6,
-      duration: "45-60 minutes",
-      schedule: [
-        {
-          day: "Monday",
-          workout: isMuscleGain ? "Upper Body Strength" : "Full Body + Cardio",
-          exercises: isMuscleGain
-            ? [
-                { name: "Push-ups", sets: "4 x 15" },
-                { name: "Dumbbell Shoulder Press", sets: "4 x 12" },
-                { name: "Bent Over Rows", sets: "4 x 12" },
-                { name: "Bicep Curls", sets: "3 x 15" },
-                { name: "Tricep Dips", sets: "3 x 12" },
-              ]
-            : [
-                { name: "Jumping Jacks", sets: "3 x 30 sec" },
-                { name: "Squats", sets: "3 x 15" },
-                { name: "Push-ups", sets: "3 x 10" },
-                { name: "Lunges", sets: "3 x 12 each" },
-                { name: "Plank", sets: "3 x 30 sec" },
-              ],
-        },
-        {
-          day: "Tuesday",
-          workout: "Yoga & Flexibility",
-          exercises: [
-            { name: "Surya Namaskar", sets: "5 rounds" },
-            { name: "Warrior Poses", sets: "Hold 30 sec each" },
-            { name: "Triangle Pose", sets: "Hold 30 sec each side" },
-            { name: "Seated Forward Bend", sets: "Hold 1 min" },
-            { name: "Savasana", sets: "5 mins" },
-          ],
-        },
-        {
-          day: "Wednesday",
-          workout: isMuscleGain ? "Lower Body Strength" : "Cardio HIIT",
-          exercises: isMuscleGain
-            ? [
-                { name: "Squats", sets: "4 x 15" },
-                { name: "Lunges", sets: "4 x 12 each" },
-                { name: "Romanian Deadlifts", sets: "4 x 12" },
-                { name: "Calf Raises", sets: "4 x 20" },
-                { name: "Glute Bridges", sets: "3 x 15" },
-              ]
-            : [
-                { name: "High Knees", sets: "30 sec on, 15 sec off x 4" },
-                { name: "Burpees", sets: "30 sec on, 15 sec off x 4" },
-                {
-                  name: "Mountain Climbers",
-                  sets: "30 sec on, 15 sec off x 4",
-                },
-                { name: "Squat Jumps", sets: "30 sec on, 15 sec off x 4" },
-              ],
-        },
-        {
-          day: "Thursday",
-          workout: "Active Recovery",
-          exercises: [
-            { name: "Light Walking", sets: "20 mins" },
-            { name: "Stretching Routine", sets: "15 mins" },
-            { name: "Pranayama (Breathing)", sets: "10 mins" },
-          ],
-        },
-        {
-          day: "Friday",
-          workout: isMuscleGain ? "Push Day" : "Strength Training",
-          exercises: [
-            { name: "Push-ups variations", sets: "4 x 12" },
-            { name: "Shoulder Press", sets: "4 x 10" },
-            { name: "Chest Flyes", sets: "3 x 12" },
-            { name: "Lateral Raises", sets: "3 x 12" },
-            { name: "Core Circuit", sets: "3 rounds" },
-          ],
-        },
-        {
-          day: "Saturday",
-          workout: "Mixed Cardio",
-          exercises: [
-            { name: "Brisk Walking/Jogging", sets: "20 mins" },
-            { name: "Cycling/Spot Jogging", sets: "15 mins" },
-            { name: "Cool Down Stretches", sets: "10 mins" },
-          ],
-        },
-        {
-          day: "Sunday",
-          workout: "Rest Day",
-          exercises: [
-            { name: "Complete rest or light stretching", sets: "Optional" },
-          ],
-        },
-      ],
-    },
-    tips: [
-      `Drink at least ${Math.round(weight * 0.033)} liters of water daily`,
-      "Eat your dinner at least 2-3 hours before sleeping",
-      "Get 7-8 hours of quality sleep every night",
-      isWeightLoss
-        ? "Avoid sugary drinks and processed foods"
-        : "Include a protein source in every meal",
-      "Track your progress weekly - measurements and photos work better than just weight",
-      "Listen to your body - rest when needed, push when you can",
-    ],
-  };
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to generate plan");
+  }
+
+  const result = await response.json();
+
+  return result.plan;
 };
 
 export default function AIPlannerPage() {
@@ -256,16 +85,19 @@ export default function AIPlannerPage() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     setIsGenerating(true);
-    // Simulate AI processing
-    setTimeout(() => {
-      const plan = mockGeneratePlan(formData);
+    try {
+      const plan = await generatePlanFromAPI(formData);
 
       setGeneratedPlan(plan);
-      setIsGenerating(false);
       setStep(3);
-    }, 2500);
+    } catch (error) {
+      console.error("Error generating plan:", error);
+      alert("Failed to generate plan. Please try again.");
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const canProceedStep1 =
