@@ -52,13 +52,36 @@ export default async function handler(
   try {
     const formData: FormData = req.body;
 
+    // Validate age
+    const age = parseInt(formData.age);
+    if (!age || age < 1 || age > 120) {
+      return res.status(400).json({
+        error: "Invalid age",
+        details: "Age must be between 1 and 120"
+      });
+    }
+
+    console.log("\n" + "=".repeat(60));
+    console.log("🚀 YOGAAI - NEW PLAN GENERATION REQUEST");
+    console.log("=".repeat(60));
+    console.log("\n📋 USER INPUT:");
+    console.log(`   Name: ${formData.name}`);
+    console.log(`   Age: ${formData.age} | Gender: ${formData.gender}`);
+    console.log(`   Weight: ${formData.weight}kg | Height: ${formData.height}cm`);
+    console.log(`   Goal: ${formData.goal}`);
+    console.log(`   Activity: ${formData.activityLevel}`);
+    console.log(`   Diet: ${formData.dietPreference}`);
+    console.log(`   Medical: ${formData.medicalConditions || "None"}`);
+
     // Generate context from REAL dataset (1000 Indian fitness profiles)
+    console.log("\n📊 STEP 1: Loading dataset (1000 Indian fitness profiles)...");
     const datasetContext = generateDatasetContext(
       parseInt(formData.age) || 25,
       formData.gender,
       formData.goal,
       formData.dietPreference
     );
+    console.log("   ✅ Dataset loaded and similar profiles found");
 
     const prompt = `You are an expert Indian nutritionist and fitness coach. Generate a personalized diet and workout plan based on the user profile and insights from our Indian fitness dataset of 1000 real users.
 
@@ -125,6 +148,14 @@ IMPORTANT:
 
 Return ONLY the JSON object, no other text.`;
 
+    console.log("\n🤖 STEP 2: Sending request to Groq API...");
+    console.log("   Model: llama-3.3-70b-versatile");
+    console.log("   Provider: Groq (LPU Inference)");
+    console.log("   Temperature: 0.7");
+    console.log("   Max Tokens: 4000");
+
+    const startTime = Date.now();
+
     const completion = await groq.chat.completions.create({
       messages: [
         {
@@ -142,9 +173,16 @@ Return ONLY the JSON object, no other text.`;
       max_tokens: 4000,
     });
 
+    const responseTime = Date.now() - startTime;
     const responseText = completion.choices[0]?.message?.content || "";
 
+    console.log(`   ✅ Response received in ${responseTime}ms`);
+    console.log(`   Tokens used: ${completion.usage?.total_tokens || "N/A"}`);
+    console.log(`   Prompt tokens: ${completion.usage?.prompt_tokens || "N/A"}`);
+    console.log(`   Completion tokens: ${completion.usage?.completion_tokens || "N/A"}`);
+
     // Parse the JSON response
+    console.log("\n📝 STEP 3: Parsing AI response...");
     let plan;
 
     try {
@@ -161,8 +199,9 @@ Return ONLY the JSON object, no other text.`;
         cleanedResponse = cleanedResponse.slice(0, -3);
       }
       plan = JSON.parse(cleanedResponse.trim());
+      console.log("   ✅ JSON parsed successfully");
     } catch {
-      console.error("Failed to parse AI response:", responseText);
+      console.error("   ❌ Failed to parse AI response:", responseText);
 
       return res.status(500).json({
         error: "Failed to parse AI response",
@@ -170,11 +209,27 @@ Return ONLY the JSON object, no other text.`;
       });
     }
 
+    // Show generated plan summary
+    console.log("\n🍽️  GENERATED DIET PLAN:");
+    console.log(`   Calories: ${plan.diet?.calories} kcal/day`);
+    console.log(`   Protein: ${plan.diet?.protein}`);
+    console.log(`   Carbs: ${plan.diet?.carbs}`);
+    console.log(`   Fats: ${plan.diet?.fats}`);
+    console.log(`   Meals: ${plan.diet?.meals?.length || 0}`);
+
+    console.log("\n💪 GENERATED WORKOUT PLAN:");
+    console.log(`   Days/Week: ${plan.workout?.daysPerWeek}`);
+    console.log(`   Duration: ${plan.workout?.duration}`);
+    console.log(`   Schedule: ${plan.workout?.schedule?.length || 0} days`);
+
+    console.log(`\n💡 TIPS: ${plan.tips?.length || 0} personalized tips generated`);
+
     // Get dataset stats to include in response
     const profiles = loadDataset();
     const stats = computeStatistics(profiles);
 
     // Save user data to Supabase (PostgreSQL) for continuous learning
+    console.log("\n💾 STEP 4: Saving to Supabase (PostgreSQL)...");
     const savedUser = await saveUserToSupabase({
       name: formData.name,
       age: formData.age,
@@ -192,6 +247,12 @@ Return ONLY the JSON object, no other text.`;
 
     // Get updated user stats from Supabase
     const userStats = await getUserStatsFromSupabase();
+    console.log(`   ✅ User saved! ID: ${savedUser.userId}`);
+    console.log(`   Total users in database: ${userStats?.totalUsers || 1}`);
+
+    console.log("\n" + "=".repeat(60));
+    console.log("✅ PLAN GENERATION COMPLETE!");
+    console.log("=".repeat(60) + "\n");
 
     return res.status(200).json({
       success: true,
