@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import Groq from "groq-sdk";
 
 import { generateDatasetContext, loadDataset, computeStatistics } from "@/lib/dataset";
+import { saveUserToSupabase, getUserStatsFromSupabase } from "@/lib/supabase";
 
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
@@ -173,6 +174,25 @@ Return ONLY the JSON object, no other text.`;
     const profiles = loadDataset();
     const stats = computeStatistics(profiles);
 
+    // Save user data to Supabase (PostgreSQL) for continuous learning
+    const savedUser = await saveUserToSupabase({
+      name: formData.name,
+      age: formData.age,
+      gender: formData.gender,
+      weight: formData.weight,
+      height: formData.height,
+      goal: formData.goal,
+      activityLevel: formData.activityLevel,
+      dietPreference: formData.dietPreference,
+      medicalConditions: formData.medicalConditions,
+      equipment: formData.equipment,
+      planCalories: plan.diet?.calories || 0,
+      planWorkoutDays: plan.workout?.daysPerWeek || 0,
+    });
+
+    // Get updated user stats from Supabase
+    const userStats = await getUserStatsFromSupabase();
+
     return res.status(200).json({
       success: true,
       plan,
@@ -182,6 +202,12 @@ Return ONLY the JSON object, no other text.`;
         totalProfiles: stats.totalRecords,
         source: "Indian Fitness Dataset (CSV)",
         matchedProfiles: 10,
+      },
+      database: {
+        provider: "Supabase (PostgreSQL)",
+        userId: savedUser.userId,
+        totalUsersServed: userStats?.totalUsers || 1,
+        message: "Your data has been saved to improve future recommendations",
       },
     });
   } catch (error) {
