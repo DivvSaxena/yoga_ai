@@ -52,12 +52,74 @@ export default async function handler(
   try {
     const formData: FormData = req.body;
 
+    // Validate name (only letters and spaces, no numbers)
+    const name = formData.name?.trim();
+    if (!name || name.length === 0) {
+      return res.status(400).json({
+        error: "Invalid name",
+        details: "Name is required"
+      });
+    }
+    if (!/^[a-zA-Z\s]+$/.test(name)) {
+      return res.status(400).json({
+        error: "Invalid name",
+        details: "Name should only contain letters and spaces"
+      });
+    }
+
     // Validate age
     const age = parseInt(formData.age);
     if (!age || age < 1 || age > 120) {
       return res.status(400).json({
         error: "Invalid age",
         details: "Age must be between 1 and 120"
+      });
+    }
+
+    // Validate weight
+    const weight = parseFloat(formData.weight);
+    if (!weight || weight <= 0 || weight > 500) {
+      return res.status(400).json({
+        error: "Invalid weight",
+        details: "Weight must be greater than 0 and less than 500 kg"
+      });
+    }
+
+    // Validate height
+    const height = parseFloat(formData.height);
+    if (!height || height <= 0 || height > 300) {
+      return res.status(400).json({
+        error: "Invalid height",
+        details: "Height must be greater than 0 and less than 300 cm"
+      });
+    }
+
+    // Validate required fields
+    if (!formData.gender) {
+      return res.status(400).json({
+        error: "Invalid gender",
+        details: "Gender is required"
+      });
+    }
+
+    if (!formData.goal) {
+      return res.status(400).json({
+        error: "Invalid goal",
+        details: "Goal is required"
+      });
+    }
+
+    if (!formData.activityLevel) {
+      return res.status(400).json({
+        error: "Invalid activity level",
+        details: "Activity level is required"
+      });
+    }
+
+    if (!formData.dietPreference) {
+      return res.status(400).json({
+        error: "Invalid diet preference",
+        details: "Diet preference is required"
       });
     }
 
