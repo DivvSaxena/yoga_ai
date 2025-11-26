@@ -1,0 +1,693 @@
+import { useState } from "react";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
+
+import { title, subtitle } from "@/components/primitives";
+import { AIIcon, CheckIcon, DietIcon, FitnessIcon } from "@/components/icons";
+import DefaultLayout from "@/layouts/default";
+
+type FormData = {
+  name: string;
+  age: string;
+  gender: string;
+  weight: string;
+  height: string;
+  goal: string;
+  activityLevel: string;
+  dietPreference: string;
+  medicalConditions: string;
+  equipment: string;
+};
+
+type GeneratedPlan = {
+  diet: {
+    calories: number;
+    protein: string;
+    carbs: string;
+    fats: string;
+    meals: {
+      time: string;
+      name: string;
+      items: string[];
+      calories: number;
+    }[];
+  };
+  workout: {
+    daysPerWeek: number;
+    duration: string;
+    schedule: {
+      day: string;
+      workout: string;
+      exercises: { name: string; sets: string }[];
+    }[];
+  };
+  tips: string[];
+};
+
+const mockGeneratePlan = (data: FormData): GeneratedPlan => {
+  const weight = parseInt(data.weight) || 70;
+  const isWeightLoss = data.goal === "weight-loss";
+  const isMuscleGain = data.goal === "muscle-gain";
+  const isVegetarian = data.dietPreference === "vegetarian";
+
+  const baseCalories = isWeightLoss ? 1600 : isMuscleGain ? 2500 : 2000;
+  const adjustedCalories = Math.round(baseCalories * (weight / 70));
+
+  return {
+    diet: {
+      calories: adjustedCalories,
+      protein: isMuscleGain ? "120-150g" : "60-80g",
+      carbs: isWeightLoss ? "150-180g" : "200-250g",
+      fats: "50-70g",
+      meals: [
+        {
+          time: "7:00 AM",
+          name: "Breakfast",
+          items: isVegetarian
+            ? [
+                "Moong dal chilla (2 pcs)",
+                "Mint chutney",
+                "1 cup green tea",
+                "5 soaked almonds",
+              ]
+            : [
+                "3 Egg white omelette",
+                "2 whole wheat toast",
+                "1 cup milk",
+                "1 banana",
+              ],
+          calories: Math.round(adjustedCalories * 0.25),
+        },
+        {
+          time: "10:30 AM",
+          name: "Mid-Morning Snack",
+          items: ["1 medium apple", "10 roasted almonds", "Green tea"],
+          calories: Math.round(adjustedCalories * 0.1),
+        },
+        {
+          time: "1:00 PM",
+          name: "Lunch",
+          items: isVegetarian
+            ? [
+                "2 Multigrain roti",
+                "1 cup rajma/chole",
+                "Mixed vegetable sabzi",
+                "Cucumber raita",
+                "Green salad",
+              ]
+            : [
+                "1 cup brown rice",
+                "Grilled chicken (150g)",
+                "Dal tadka",
+                "Salad",
+                "Buttermilk",
+              ],
+          calories: Math.round(adjustedCalories * 0.3),
+        },
+        {
+          time: "4:30 PM",
+          name: "Evening Snack",
+          items: isVegetarian
+            ? ["Sprouts chaat", "Coconut water"]
+            : ["Boiled egg (2)", "Green tea"],
+          calories: Math.round(adjustedCalories * 0.1),
+        },
+        {
+          time: "7:30 PM",
+          name: "Dinner",
+          items: isVegetarian
+            ? ["1 Roti", "Palak paneer", "Mixed veg salad", "1 cup dal"]
+            : ["2 Roti", "Fish curry", "Sauteed vegetables", "Curd"],
+          calories: Math.round(adjustedCalories * 0.25),
+        },
+      ],
+    },
+    workout: {
+      daysPerWeek:
+        data.activityLevel === "sedentary"
+          ? 3
+          : data.activityLevel === "moderate"
+            ? 5
+            : 6,
+      duration: "45-60 minutes",
+      schedule: [
+        {
+          day: "Monday",
+          workout: isMuscleGain ? "Upper Body Strength" : "Full Body + Cardio",
+          exercises: isMuscleGain
+            ? [
+                { name: "Push-ups", sets: "4 x 15" },
+                { name: "Dumbbell Shoulder Press", sets: "4 x 12" },
+                { name: "Bent Over Rows", sets: "4 x 12" },
+                { name: "Bicep Curls", sets: "3 x 15" },
+                { name: "Tricep Dips", sets: "3 x 12" },
+              ]
+            : [
+                { name: "Jumping Jacks", sets: "3 x 30 sec" },
+                { name: "Squats", sets: "3 x 15" },
+                { name: "Push-ups", sets: "3 x 10" },
+                { name: "Lunges", sets: "3 x 12 each" },
+                { name: "Plank", sets: "3 x 30 sec" },
+              ],
+        },
+        {
+          day: "Tuesday",
+          workout: "Yoga & Flexibility",
+          exercises: [
+            { name: "Surya Namaskar", sets: "5 rounds" },
+            { name: "Warrior Poses", sets: "Hold 30 sec each" },
+            { name: "Triangle Pose", sets: "Hold 30 sec each side" },
+            { name: "Seated Forward Bend", sets: "Hold 1 min" },
+            { name: "Savasana", sets: "5 mins" },
+          ],
+        },
+        {
+          day: "Wednesday",
+          workout: isMuscleGain ? "Lower Body Strength" : "Cardio HIIT",
+          exercises: isMuscleGain
+            ? [
+                { name: "Squats", sets: "4 x 15" },
+                { name: "Lunges", sets: "4 x 12 each" },
+                { name: "Romanian Deadlifts", sets: "4 x 12" },
+                { name: "Calf Raises", sets: "4 x 20" },
+                { name: "Glute Bridges", sets: "3 x 15" },
+              ]
+            : [
+                { name: "High Knees", sets: "30 sec on, 15 sec off x 4" },
+                { name: "Burpees", sets: "30 sec on, 15 sec off x 4" },
+                {
+                  name: "Mountain Climbers",
+                  sets: "30 sec on, 15 sec off x 4",
+                },
+                { name: "Squat Jumps", sets: "30 sec on, 15 sec off x 4" },
+              ],
+        },
+        {
+          day: "Thursday",
+          workout: "Active Recovery",
+          exercises: [
+            { name: "Light Walking", sets: "20 mins" },
+            { name: "Stretching Routine", sets: "15 mins" },
+            { name: "Pranayama (Breathing)", sets: "10 mins" },
+          ],
+        },
+        {
+          day: "Friday",
+          workout: isMuscleGain ? "Push Day" : "Strength Training",
+          exercises: [
+            { name: "Push-ups variations", sets: "4 x 12" },
+            { name: "Shoulder Press", sets: "4 x 10" },
+            { name: "Chest Flyes", sets: "3 x 12" },
+            { name: "Lateral Raises", sets: "3 x 12" },
+            { name: "Core Circuit", sets: "3 rounds" },
+          ],
+        },
+        {
+          day: "Saturday",
+          workout: "Mixed Cardio",
+          exercises: [
+            { name: "Brisk Walking/Jogging", sets: "20 mins" },
+            { name: "Cycling/Spot Jogging", sets: "15 mins" },
+            { name: "Cool Down Stretches", sets: "10 mins" },
+          ],
+        },
+        {
+          day: "Sunday",
+          workout: "Rest Day",
+          exercises: [
+            { name: "Complete rest or light stretching", sets: "Optional" },
+          ],
+        },
+      ],
+    },
+    tips: [
+      `Drink at least ${Math.round(weight * 0.033)} liters of water daily`,
+      "Eat your dinner at least 2-3 hours before sleeping",
+      "Get 7-8 hours of quality sleep every night",
+      isWeightLoss
+        ? "Avoid sugary drinks and processed foods"
+        : "Include a protein source in every meal",
+      "Track your progress weekly - measurements and photos work better than just weight",
+      "Listen to your body - rest when needed, push when you can",
+    ],
+  };
+};
+
+export default function AIPlannerPage() {
+  const [step, setStep] = useState(1);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedPlan, setGeneratedPlan] = useState<GeneratedPlan | null>(
+    null,
+  );
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    age: "",
+    gender: "",
+    weight: "",
+    height: "",
+    goal: "",
+    activityLevel: "",
+    dietPreference: "",
+    medicalConditions: "",
+    equipment: "",
+  });
+
+  const updateForm = (field: keyof FormData, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleGenerate = () => {
+    setIsGenerating(true);
+    // Simulate AI processing
+    setTimeout(() => {
+      const plan = mockGeneratePlan(formData);
+
+      setGeneratedPlan(plan);
+      setIsGenerating(false);
+      setStep(3);
+    }, 2500);
+  };
+
+  const canProceedStep1 =
+    formData.name &&
+    formData.age &&
+    formData.gender &&
+    formData.weight &&
+    formData.height;
+  const canProceedStep2 =
+    formData.goal && formData.activityLevel && formData.dietPreference;
+
+  return (
+    <DefaultLayout>
+      {/* Hero Section */}
+      <section className="py-8 text-center">
+        <div className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center mx-auto mb-4">
+          <AIIcon className="text-success" size={32} />
+        </div>
+        <h1 className={title({ size: "lg" })}>AI </h1>
+        <h1 className={title({ size: "lg", color: "green" })}>Planner</h1>
+        <p className={subtitle({ class: "mt-4 max-w-2xl mx-auto" })}>
+          Get your personalized diet and workout plan in under 2 minutes.
+          Powered by AI, designed for Indian lifestyles.
+        </p>
+      </section>
+
+      {/* Progress Steps */}
+      {step < 3 && (
+        <div className="flex justify-center gap-4 mb-8">
+          {[1, 2].map((s) => (
+            <div key={s} className="flex items-center gap-2">
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                  step >= s ? "bg-success text-white" : "bg-default-200"
+                }`}
+              >
+                {step > s ? <CheckIcon size={16} /> : s}
+              </div>
+              <span className={step >= s ? "text-success" : "text-default-500"}>
+                {s === 1 ? "Basic Info" : "Goals & Preferences"}
+              </span>
+              {s < 2 && <div className="w-8 h-0.5 bg-default-200" />}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Step 1: Basic Information */}
+      {step === 1 && (
+        <section className="max-w-2xl mx-auto py-8">
+          <div className="bg-default-50 rounded-2xl p-8">
+            <h2 className="text-xl font-semibold mb-6">
+              Tell us about yourself
+            </h2>
+
+            <div className="space-y-6">
+              <Input
+                label="Your Name"
+                placeholder="Enter your name"
+                value={formData.name}
+                onValueChange={(v) => updateForm("name", v)}
+              />
+
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  label="Age"
+                  placeholder="25"
+                  type="number"
+                  value={formData.age}
+                  onValueChange={(v) => updateForm("age", v)}
+                />
+                <div>
+                  <span className="block text-sm mb-2">Gender</span>
+                  <div className="flex gap-2">
+                    {["male", "female", "other"].map((g) => (
+                      <Button
+                        key={g}
+                        className={
+                          formData.gender === g ? "bg-success text-white" : ""
+                        }
+                        radius="full"
+                        size="sm"
+                        variant={formData.gender === g ? "solid" : "bordered"}
+                        onPress={() => updateForm("gender", g)}
+                      >
+                        {g.charAt(0).toUpperCase() + g.slice(1)}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  label="Weight (kg)"
+                  placeholder="70"
+                  type="number"
+                  value={formData.weight}
+                  onValueChange={(v) => updateForm("weight", v)}
+                />
+                <Input
+                  label="Height (cm)"
+                  placeholder="170"
+                  type="number"
+                  value={formData.height}
+                  onValueChange={(v) => updateForm("height", v)}
+                />
+              </div>
+            </div>
+
+            <div className="mt-8 flex justify-end">
+              <Button
+                color="success"
+                isDisabled={!canProceedStep1}
+                radius="full"
+                size="lg"
+                onPress={() => setStep(2)}
+              >
+                Continue
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Step 2: Goals & Preferences */}
+      {step === 2 && (
+        <section className="max-w-2xl mx-auto py-8">
+          <div className="bg-default-50 rounded-2xl p-8">
+            <h2 className="text-xl font-semibold mb-6">
+              Your goals & preferences
+            </h2>
+
+            <div className="space-y-6">
+              <div>
+                <span className="block text-sm mb-3">
+                  What&apos;s your primary goal?
+                </span>
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { id: "weight-loss", label: "Lose Weight", emoji: "⚖️" },
+                    { id: "muscle-gain", label: "Build Muscle", emoji: "💪" },
+                    { id: "maintenance", label: "Stay Fit", emoji: "🎯" },
+                  ].map((goal) => (
+                    <button
+                      key={goal.id}
+                      className={`p-4 rounded-xl border-2 text-center transition-all ${
+                        formData.goal === goal.id
+                          ? "border-success bg-success/10"
+                          : "border-default-200 hover:border-default-400"
+                      }`}
+                      onClick={() => updateForm("goal", goal.id)}
+                    >
+                      <div className="text-2xl mb-2">{goal.emoji}</div>
+                      <div className="text-sm font-medium">{goal.label}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <span className="block text-sm mb-3">Activity Level</span>
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    {
+                      id: "sedentary",
+                      label: "Sedentary",
+                      desc: "Desk job, little exercise",
+                    },
+                    {
+                      id: "moderate",
+                      label: "Moderate",
+                      desc: "Some exercise weekly",
+                    },
+                    { id: "active", label: "Active", desc: "Regular exercise" },
+                  ].map((level) => (
+                    <button
+                      key={level.id}
+                      className={`p-4 rounded-xl border-2 text-center transition-all ${
+                        formData.activityLevel === level.id
+                          ? "border-success bg-success/10"
+                          : "border-default-200 hover:border-default-400"
+                      }`}
+                      onClick={() => updateForm("activityLevel", level.id)}
+                    >
+                      <div className="text-sm font-medium">{level.label}</div>
+                      <div className="text-xs text-default-500 mt-1">
+                        {level.desc}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <span className="block text-sm mb-3">Diet Preference</span>
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { id: "vegetarian", label: "Vegetarian", emoji: "🥗" },
+                    { id: "non-vegetarian", label: "Non-Veg", emoji: "🍗" },
+                    { id: "eggetarian", label: "Eggetarian", emoji: "🥚" },
+                  ].map((diet) => (
+                    <button
+                      key={diet.id}
+                      className={`p-4 rounded-xl border-2 text-center transition-all ${
+                        formData.dietPreference === diet.id
+                          ? "border-success bg-success/10"
+                          : "border-default-200 hover:border-default-400"
+                      }`}
+                      onClick={() => updateForm("dietPreference", diet.id)}
+                    >
+                      <div className="text-2xl mb-1">{diet.emoji}</div>
+                      <div className="text-sm font-medium">{diet.label}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <Input
+                label="Any medical conditions or allergies? (Optional)"
+                placeholder="e.g., Diabetes, Lactose intolerant, None"
+                value={formData.medicalConditions}
+                onValueChange={(v) => updateForm("medicalConditions", v)}
+              />
+
+              <div>
+                <span className="block text-sm mb-3">Equipment Available</span>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    "None (Bodyweight)",
+                    "Basic (Dumbbells, Mat)",
+                    "Full Gym Access",
+                  ].map((eq) => (
+                    <Button
+                      key={eq}
+                      className={
+                        formData.equipment === eq ? "bg-success text-white" : ""
+                      }
+                      radius="full"
+                      size="sm"
+                      variant={formData.equipment === eq ? "solid" : "bordered"}
+                      onPress={() => updateForm("equipment", eq)}
+                    >
+                      {eq}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 flex justify-between">
+              <Button
+                radius="full"
+                variant="bordered"
+                onPress={() => setStep(1)}
+              >
+                Back
+              </Button>
+              <Button
+                color="success"
+                isDisabled={!canProceedStep2}
+                isLoading={isGenerating}
+                radius="full"
+                size="lg"
+                onPress={handleGenerate}
+              >
+                {isGenerating ? "Generating Your Plan..." : "Generate My Plan"}
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Step 3: Generated Plan */}
+      {step === 3 && generatedPlan && (
+        <section className="py-8">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-success/10 rounded-full text-success mb-4">
+              <CheckIcon size={20} />
+              <span className="font-medium">Plan Generated Successfully!</span>
+            </div>
+            <h2 className={title({ size: "sm" })}>
+              {formData.name}&apos;s Personalized Plan
+            </h2>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-8">
+            {/* Diet Plan */}
+            <div className="bg-gradient-to-br from-warning/10 to-warning/5 rounded-3xl p-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 rounded-xl bg-warning/20 flex items-center justify-center">
+                  <DietIcon className="text-warning" size={24} />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold">Your Diet Plan</h3>
+                  <p className="text-sm text-default-500">
+                    {generatedPlan.diet.calories} calories/day
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4 mb-6">
+                <div className="bg-white dark:bg-default-100 rounded-xl p-3 text-center">
+                  <p className="text-lg font-bold text-warning">
+                    {generatedPlan.diet.protein}
+                  </p>
+                  <p className="text-xs text-default-500">Protein</p>
+                </div>
+                <div className="bg-white dark:bg-default-100 rounded-xl p-3 text-center">
+                  <p className="text-lg font-bold text-warning">
+                    {generatedPlan.diet.carbs}
+                  </p>
+                  <p className="text-xs text-default-500">Carbs</p>
+                </div>
+                <div className="bg-white dark:bg-default-100 rounded-xl p-3 text-center">
+                  <p className="text-lg font-bold text-warning">
+                    {generatedPlan.diet.fats}
+                  </p>
+                  <p className="text-xs text-default-500">Fats</p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                {generatedPlan.diet.meals.map((meal, index) => (
+                  <div
+                    key={index}
+                    className="bg-white dark:bg-default-100 rounded-xl p-4"
+                  >
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-medium">{meal.name}</span>
+                      <span className="text-xs text-default-500">
+                        {meal.time}
+                      </span>
+                    </div>
+                    <ul className="text-sm text-default-600 space-y-1">
+                      {meal.items.map((item, idx) => (
+                        <li key={idx}>• {item}</li>
+                      ))}
+                    </ul>
+                    <p className="text-xs text-success mt-2">
+                      {meal.calories} calories
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Workout Plan */}
+            <div className="bg-gradient-to-br from-success/10 to-success/5 rounded-3xl p-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 rounded-xl bg-success/20 flex items-center justify-center">
+                  <FitnessIcon className="text-success" size={24} />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold">Your Workout Plan</h3>
+                  <p className="text-sm text-default-500">
+                    {generatedPlan.workout.daysPerWeek} days/week •{" "}
+                    {generatedPlan.workout.duration}
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                {generatedPlan.workout.schedule.map((day, index) => (
+                  <div
+                    key={index}
+                    className="bg-white dark:bg-default-100 rounded-xl p-4"
+                  >
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-medium text-success">
+                        {day.day}
+                      </span>
+                      <span className="text-sm">{day.workout}</span>
+                    </div>
+                    <div className="space-y-1">
+                      {day.exercises.map((ex, idx) => (
+                        <div
+                          key={idx}
+                          className="flex justify-between text-sm text-default-600"
+                        >
+                          <span>{ex.name}</span>
+                          <span className="text-default-400">{ex.sets}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Tips */}
+          <div className="mt-8 bg-gradient-to-r from-primary/10 to-violet/10 rounded-3xl p-6">
+            <h3 className="text-lg font-semibold mb-4">
+              Personalized Tips for You
+            </h3>
+            <div className="grid md:grid-cols-2 gap-3">
+              {generatedPlan.tips.map((tip, index) => (
+                <div key={index} className="flex items-start gap-3">
+                  <CheckIcon className="text-success mt-0.5" size={18} />
+                  <span className="text-sm text-default-700">{tip}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="mt-8 flex flex-wrap justify-center gap-4">
+            <Button color="success" radius="full" size="lg" variant="shadow">
+              Download Plan (PDF)
+            </Button>
+            <Button
+              radius="full"
+              size="lg"
+              variant="bordered"
+              onPress={() => setStep(1)}
+            >
+              Create New Plan
+            </Button>
+          </div>
+        </section>
+      )}
+    </DefaultLayout>
+  );
+}
